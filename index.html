@@ -27,9 +27,57 @@
     <script src="js/vendor/respond_1.4.2.min.js"></script>
     <![endif]-->
 
-    <script src="js/vendor/angular.min.js"></script>
-    <script src="js/vendor/angular-resource.min.js"></script>
-    <script src="js/vendor/angular-animate.min.js"></script>
+    <style>
+        ul.tires {
+            list-style: none;
+        }
+
+        section.range-slider {
+            overflow: hidden;
+            position: relative;
+            width: 200px;
+            height: 35px;
+        }
+
+        section.range-slider input {
+            pointer-events: none;
+            position: absolute;
+            overflow: hidden;
+            left: 0;
+            top: 0;
+            width: 200px;
+            outline: none;
+            height: 18px;
+        }
+
+        section.range-slider input::-webkit-slider-thumb {
+            pointer-events: all;
+            position: relative;
+            z-index: 1;
+            outline: 0;
+        }
+
+        section.range-slider input::-moz-range-thumb {
+            pointer-events: all;
+            position: relative;
+            z-index: 10;
+            -moz-appearance: none;
+            background: linear-gradient(to bottom, #ededed 0%, #dedede 100%);
+            width: 11px;
+        }
+
+        section.range-slider input::-moz-range-track {
+            position: relative;
+            z-index: -1;
+            background-color: rgba(0, 0, 0, .15);
+            border: 0;
+        }
+
+        section.range-slider input:last-of-type::-moz-range-track {
+            -moz-appearance: none;
+            background: none transparent;
+            border: 0;
+        }    </style>
 </head>
 
 <body ng-app="tiresApp">
@@ -58,7 +106,7 @@
 
 <div class="container" ng-controller="tiresCtrl as t">
 
-    <div class="">
+    <div>
         <h1>Выбор шин</h1>
 
         <p>
@@ -75,12 +123,34 @@
         <select ng-model="t.caliber" ng-options="op.id as op.label for op in t.allCaliber"></select>
     </div>
 
+    <div>
+        1<section data-range-slider class="range-slider" step="0.5" ng-model="t.range" min="0" max="5"></section>2
+    </div>
+
+    <div>
+        <h1>Найдено <span ng-bind="filtered.length"></span></h1>
+
+        <ul class="tires">
+            <li ng-repeat='tire in filtered = (t.tires)'>
+                <img ng-src="{{tire.url}}">
+                <span ng-bind="tire.brand"></span>
+                <span ng-bind="tire.model"></span>
+            </li>
+        </ul>
+    </div>
+
 </div>
 <!-- /.container -->
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
+<script src="js/vendor/angular.min.js"></script>
+<script src="js/vendor/angular-resource.min.js"></script>
+<script src="js/vendor/angular-animate.min.js"></script>
+<script src="js/vendor/underscore.js"></script>
+<script src="js/vendor/ng-range-slider.js"></script>
+
 <script src="js/tires.js"></script>
 
 </body>
