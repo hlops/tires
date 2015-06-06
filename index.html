@@ -9,6 +9,7 @@
     <title>Шины для машины</title>
 
     <link href="css/vendor/bootstrap.min.css" rel="stylesheet">
+    <link href="css/vendor/angular-range-slider.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <style>
@@ -31,53 +32,7 @@
         ul.tires {
             list-style: none;
         }
-
-        section.range-slider {
-            overflow: hidden;
-            position: relative;
-            width: 200px;
-            height: 35px;
-        }
-
-        section.range-slider input {
-            pointer-events: none;
-            position: absolute;
-            overflow: hidden;
-            left: 0;
-            top: 0;
-            width: 200px;
-            outline: none;
-            height: 18px;
-        }
-
-        section.range-slider input::-webkit-slider-thumb {
-            pointer-events: all;
-            position: relative;
-            z-index: 1;
-            outline: 0;
-        }
-
-        section.range-slider input::-moz-range-thumb {
-            pointer-events: all;
-            position: relative;
-            z-index: 10;
-            -moz-appearance: none;
-            background: linear-gradient(to bottom, #ededed 0%, #dedede 100%);
-            width: 11px;
-        }
-
-        section.range-slider input::-moz-range-track {
-            position: relative;
-            z-index: -1;
-            background-color: rgba(0, 0, 0, .15);
-            border: 0;
-        }
-
-        section.range-slider input:last-of-type::-moz-range-track {
-            -moz-appearance: none;
-            background: none transparent;
-            border: 0;
-        }    </style>
+    </style>
 </head>
 
 <body ng-app="tiresApp">
@@ -123,9 +78,49 @@
         <select ng-model="t.caliber" ng-options="op.id as op.label for op in t.allCaliber"></select>
     </div>
 
+    <hr/>
+
     <div>
-        1<section data-range-slider class="range-slider" step="0.5" ng-model="t.range" min="0" max="5"></section>2
+        <section class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div range-slider
+                     floor="0"
+                     ceiling="10"
+                     dragstop="true"
+                     ng-model-low="t.ranges.controllabilityWet.from"
+                     ng-model-high="t.ranges.controllabilityWet.to"></div>
+            </div>
+        </section>
+
+        Мокрое покрытие
+        Управляемость
+        Тормозной путь
+        Аквапланирование
+        <section data-range-slider class="range-slider" ng-model="t.ranges.controllabilityWet"
+                 min="t.ranges.controllabilityWet.min" max="t.ranges.controllabilityWet.max"></section>
+        Сухое покрытие
+        Управляемость
+        Тормозной путь
+        <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+        Снег
+        Управляемость
+        Тормозной путь
+        <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+        Лед
+        Управляемость
+        Тормозной путь
+        <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+        Комфорт
+        Акустический шум
+        Плавность хода
+        <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+        Экономичность
+        Расход топлива
+        Ресурс
+        Ударопрочность
+        <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
     </div>
+    <hr/>
 
     <div>
         <h1>Найдено <span ng-bind="filtered.length"></span></h1>
@@ -145,11 +140,12 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
+
 <script src="js/vendor/angular.min.js"></script>
 <script src="js/vendor/angular-resource.min.js"></script>
 <script src="js/vendor/angular-animate.min.js"></script>
 <script src="js/vendor/underscore.js"></script>
-<script src="js/vendor/ng-range-slider.js"></script>
+<script src="js/vendor/angular-range-slider.min.js"></script>
 
 <script src="js/tires.js"></script>
 

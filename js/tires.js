@@ -1,6 +1,6 @@
 {
     angular
-        .module('tiresApp', ['ngResource'])
+        .module('tiresApp', ['ngResource', 'angularRangeSlider'])
         .controller('tiresCtrl', tiresCtrl)
         .factory('tiresService', tiresService)
     ;
@@ -29,16 +29,36 @@
             {id: 9, label: "9"}
         ];
 
+        tiresCtrl.ranges = {
+            controllabilityWet: {from: 0, to: 10, min: 5, max: 10}
+        };
         tiresService.get(function (data) {
+            var name, value, range, tire;
             tiresCtrl.tires = data.Sheet1;
             for (var i = 0; i < tiresCtrl.tires.length; i++) {
-                angular.extend(tiresCtrl.tires[i], {url: "i/tire.jpg"});
+                tire = tiresCtrl.tires[i];
+                for (name in tire) {
+                    if (tire.hasOwnProperty(name)) {
+                        value = tire[name];
+                        if (tire.hasOwnProperty(name) && !isNaN(value)) {
+                            range = tiresCtrl.ranges[name];
+                            if (!range) range = tiresCtrl.ranges[name] = {};
+                            if (!range.min || range.min < value) {
+                                range.min = range.from = value;
+                            }
+                            if (!range.max || range.max > value) {
+                                range.max = range.to = value;
+                            }
+                        }
+                    }
+                }
+                angular.extend(tire, {url: "i/tire.jpg"});
             }
         });
 
-        this.range = {
+        tiresCtrl.range = {
             from: 0, to: 10
-        }
+        };
     }
 
     function tiresService($resource) {
