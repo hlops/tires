@@ -83,54 +83,42 @@
     <hr/>
 
     <div>
-        /<div tire-range-slider>1</div>/
-        <tire-range-slider/>
         <accordion>
             <accordion-group heading="Мокрое покрытие" is-open="true">
                 Управляемость
-                /
-                <tire-range-slider>!</tire-range-slider>
-                /
-                <div range-slider
-                     min="t.ranges.controllabilityWet.min" max="t.ranges.controllabilityWet.max"
-                     model-min="t.ranges.controllabilityWet.from" model-max="t.ranges.controllabilityWet.to"></div>
+                <tire-range-slider range="t.ranges.controllabilityWet"></tire-range-slider>
                 Тормозной путь
-                <div range-slider
-                     min="t.ranges.stoppingWet.min" max="t.ranges.stoppingWet.max"
-                     model-min="t.ranges.stoppingWet.from" model-max="t.ranges.stoppingWet.to"></div>
+                <tire-range-slider range="t.ranges.stoppingWet"></tire-range-slider>
                 Аквапланирование
-                <div range-slider
-                     min="t.ranges.hydroplaningWet.min" max="t.ranges.hydroplaningWet.max"
-                     model-min="t.ranges.hydroplaningWet.from" model-max="t.ranges.hydroplaningWet.to"></div>
+                <tire-range-slider range="t.ranges.hydroplaningWet"></tire-range-slider>
             </accordion-group>
             <accordion-group heading="Сухое покрытие">
                 Управляемость
-                <div range-slider
-                     min="t.ranges.controllabilityDry.min" max="t.ranges.controllabilityDry.max"
-                     model-min="t.ranges.controllabilityDry.from" model-max="t.ranges.controllabilityDry.to"></div>
+                <tire-range-slider range="t.ranges.controllabilityDry"></tire-range-slider>
                 Тормозной путь
-                <div range-slider
-                     min="t.ranges.stoppingDry.min" max="t.ranges.stoppingDry.max"
-                     model-min="t.ranges.stoppingDry.from" model-max="t.ranges.stoppingDry.to"></div>
+                <tire-range-slider range="t.ranges.stoppingDry"></tire-range-slider>
             </accordion-group>
             <accordion-group heading="Снег">
                 Управляемость
-                <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+                <tire-range-slider range="t.ranges.controllabilitySnow"></tire-range-slider>
                 Тормозной путь
+                <tire-range-slider range="t.ranges.stoppingSnow"></tire-range-slider>
             </accordion-group>
             <accordion-group heading="Лед">
                 Управляемость
-                <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+                <tire-range-slider range="t.ranges.controllabilityIce"></tire-range-slider>
                 Тормозной путь
+                <tire-range-slider range="t.ranges.stoppingIce"></tire-range-slider>
             </accordion-group>
             <accordion-group heading="Комфорт">
                 Акустический шум
-                <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+                <tire-range-slider range="t.ranges.acousticNoise"></tire-range-slider>
                 Плавность хода
+                <tire-range-slider range="t.ranges.ride"></tire-range-slider>
             </accordion-group>
             <accordion-group heading="Экономичность">
                 Расход топлива
-                <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+                <tire-range-slider range="t.ranges.fuelConsumption"></tire-range-slider>
                 Ресурс
                 Ударопрочность
             </accordion-group>

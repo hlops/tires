@@ -4,7 +4,7 @@
         .controller('tiresCtrl', tiresCtrl)
         .filter("tireFilter", tireFilter)
         .factory('tiresService', tiresService)
-        .directive('tire-range-slider', tireRangeSlider)
+        .directive('tireRangeSlider', tireRangeSlider)
     ;
 
 
@@ -97,9 +97,13 @@
     }
 
     function tireRangeSlider() {
-        return [{
-            template: "<div>cwcewcw</div>"
-        }]
+        return {
+            restrict: 'E',
+            scope: {
+                range: '='
+            },
+            template: '<div range-slider min="range.min" max="range.max" model-min="range.from" model-max="range.to"></div>'
+        }
     }
 
 }
