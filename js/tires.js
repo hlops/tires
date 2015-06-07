@@ -102,7 +102,7 @@
             scope: {
                 range: '='
             },
-            template: '<div range-slider min="range.min" max="range.max" model-min="range.from" model-max="range.to"></div>'
+            template: '<div range-slider min="range.min" max="range.max" model-min="range.from" model-max="range.to" attach-handle-values="true"></div>'
         }
     }
 
