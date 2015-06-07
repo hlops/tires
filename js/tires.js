@@ -1,8 +1,10 @@
 {
     angular
-        .module('tiresApp', ['ngResource', 'angularRangeSlider'])
+        .module('tiresApp', ['ngResource', 'ui.bootstrap', 'ui-rangeSlider'])
         .controller('tiresCtrl', tiresCtrl)
+        .filter("tireFilter", tireFilter)
         .factory('tiresService', tiresService)
+        .directive('tire-range-slider', tireRangeSlider)
     ;
 
 
@@ -30,7 +32,7 @@
         ];
 
         tiresCtrl.ranges = {
-            controllabilityWet: {from: 0, to: 10, min: 5, max: 10}
+            filterNames: {}
         };
         tiresService.get(function (data) {
             var name, value, range, tire;
@@ -41,13 +43,14 @@
                     if (tire.hasOwnProperty(name)) {
                         value = tire[name];
                         if (tire.hasOwnProperty(name) && !isNaN(value)) {
+                            tiresCtrl.ranges.filterNames[name] = true;
                             range = tiresCtrl.ranges[name];
                             if (!range) range = tiresCtrl.ranges[name] = {};
-                            if (!range.min || range.min < value) {
-                                range.min = range.from = value;
+                            if (!range.min || range.min > value) {
+                                range.min = range.from = parseInt(value);
                             }
-                            if (!range.max || range.max > value) {
-                                range.max = range.to = value;
+                            if (!range.max || range.max < value) {
+                                range.max = range.to = parseInt(value);
                             }
                         }
                     }
@@ -56,13 +59,47 @@
             }
         });
 
+        // remove
         tiresCtrl.range = {
             from: 0, to: 10
         };
     }
 
+    function isFilterFit(item, ranges) {
+        for (var name in ranges.filterNames) {
+            if (ranges.filterNames.hasOwnProperty(name)) {
+                var range = ranges[name];
+                if (range.min != range.from || range.max != range.to) {
+                    var value = parseInt(item[name]);
+                    if (!(value >= range.from && value <= range.to)) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function tireFilter() {
+        return function (arr, ranges) {
+            var items = [];
+            if (arr && arr.length) {
+                for (var i = 0; i < arr.length; i++) {
+                    if (isFilterFit(arr[i], ranges)) {
+                        items.push(arr[i]);
+                    }
+                }
+            }
+            return items;
+        }
+    }
+
     function tiresService($resource) {
         return $resource("js/tires.json");
+    }
+
+    function tireRangeSlider() {
+        return [{
+            template: "<div>cwcewcw</div>"
+        }]
     }
 
 }

@@ -9,7 +9,7 @@
     <title>Шины для машины</title>
 
     <link href="css/vendor/bootstrap.min.css" rel="stylesheet">
-    <link href="css/vendor/angular-range-slider.css" rel="stylesheet">
+    <link href="css/vendor/angular.rangeSlider.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <style>
@@ -46,15 +46,17 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Project name</a>
+            <a class="navbar-brand" href="#">Шиносайт</a>
         </div>
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </div>
+        <!--
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+        -->
         <!--/.nav-collapse -->
     </div>
 </div>
@@ -62,7 +64,7 @@
 <div class="container" ng-controller="tiresCtrl as t">
 
     <div>
-        <h1>Выбор шин</h1>
+        <h1>Выбор шины для машины</h1>
 
         <p>
             <a href="#">Выбрать по марке автомобиля</a>
@@ -81,44 +83,58 @@
     <hr/>
 
     <div>
-        <section class="row">
-            <div class="col-md-6 col-md-offset-3">
+        /<div tire-range-slider>1</div>/
+        <tire-range-slider/>
+        <accordion>
+            <accordion-group heading="Мокрое покрытие" is-open="true">
+                Управляемость
+                /
+                <tire-range-slider>!</tire-range-slider>
+                /
                 <div range-slider
-                     floor="0"
-                     ceiling="10"
-                     dragstop="true"
-                     ng-model-low="t.ranges.controllabilityWet.from"
-                     ng-model-high="t.ranges.controllabilityWet.to"></div>
-            </div>
-        </section>
-
-        Мокрое покрытие
-        Управляемость
-        Тормозной путь
-        Аквапланирование
-        <section data-range-slider class="range-slider" ng-model="t.ranges.controllabilityWet"
-                 min="t.ranges.controllabilityWet.min" max="t.ranges.controllabilityWet.max"></section>
-        Сухое покрытие
-        Управляемость
-        Тормозной путь
-        <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
-        Снег
-        Управляемость
-        Тормозной путь
-        <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
-        Лед
-        Управляемость
-        Тормозной путь
-        <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
-        Комфорт
-        Акустический шум
-        Плавность хода
-        <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
-        Экономичность
-        Расход топлива
-        Ресурс
-        Ударопрочность
-        <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+                     min="t.ranges.controllabilityWet.min" max="t.ranges.controllabilityWet.max"
+                     model-min="t.ranges.controllabilityWet.from" model-max="t.ranges.controllabilityWet.to"></div>
+                Тормозной путь
+                <div range-slider
+                     min="t.ranges.stoppingWet.min" max="t.ranges.stoppingWet.max"
+                     model-min="t.ranges.stoppingWet.from" model-max="t.ranges.stoppingWet.to"></div>
+                Аквапланирование
+                <div range-slider
+                     min="t.ranges.hydroplaningWet.min" max="t.ranges.hydroplaningWet.max"
+                     model-min="t.ranges.hydroplaningWet.from" model-max="t.ranges.hydroplaningWet.to"></div>
+            </accordion-group>
+            <accordion-group heading="Сухое покрытие">
+                Управляемость
+                <div range-slider
+                     min="t.ranges.controllabilityDry.min" max="t.ranges.controllabilityDry.max"
+                     model-min="t.ranges.controllabilityDry.from" model-max="t.ranges.controllabilityDry.to"></div>
+                Тормозной путь
+                <div range-slider
+                     min="t.ranges.stoppingDry.min" max="t.ranges.stoppingDry.max"
+                     model-min="t.ranges.stoppingDry.from" model-max="t.ranges.stoppingDry.to"></div>
+            </accordion-group>
+            <accordion-group heading="Снег">
+                Управляемость
+                <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+                Тормозной путь
+            </accordion-group>
+            <accordion-group heading="Лед">
+                Управляемость
+                <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+                Тормозной путь
+            </accordion-group>
+            <accordion-group heading="Комфорт">
+                Акустический шум
+                <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+                Плавность хода
+            </accordion-group>
+            <accordion-group heading="Экономичность">
+                Расход топлива
+                <section data-range-slider class="range-slider" step="1" ng-model="t.range" min="0" max="10"></section>
+                Ресурс
+                Ударопрочность
+            </accordion-group>
+        </accordion>
     </div>
     <hr/>
 
@@ -126,7 +142,7 @@
         <h1>Найдено <span ng-bind="filtered.length"></span></h1>
 
         <ul class="tires">
-            <li ng-repeat='tire in filtered = (t.tires)'>
+            <li ng-repeat='tire in filtered = (t.tires | tireFilter:t.ranges)'>
                 <img ng-src="{{tire.url}}">
                 <span ng-bind="tire.brand"></span>
                 <span ng-bind="tire.model"></span>
@@ -137,15 +153,13 @@
 </div>
 <!-- /.container -->
 
-<!-- Bootstrap core JavaScript
-================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-
+<script src="js/vendor/jquery_1.11.1.js"></script>
 <script src="js/vendor/angular.min.js"></script>
+<script src="js/vendor/ui-bootstrap-0.13.0.min.js"></script>
 <script src="js/vendor/angular-resource.min.js"></script>
 <script src="js/vendor/angular-animate.min.js"></script>
-<script src="js/vendor/underscore.js"></script>
-<script src="js/vendor/angular-range-slider.min.js"></script>
+<script src="js/vendor/angular.rangeSlider.js"></script>
 
 <script src="js/tires.js"></script>
 
