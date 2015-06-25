@@ -8,7 +8,8 @@
     <meta name="author" content="">
     <title>Шины для машины</title>
 
-    <link href="css/vendor/bootstrap.min.css" rel="stylesheet">
+    <link href="css/vendor/bootstrap.css" rel="stylesheet">
+    <link href="css/vendor/bootstrap-theme.css" rel="stylesheet">
     <link href="css/vendor/angular.rangeSlider.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
@@ -71,13 +72,13 @@
         </p>
 
         Ширина:
-        <select ng-model="t.width" ng-options="op.id as op.label for op in t.allWidth"></select>
+        <select ng-model="t.model.width" ng-options="op.id as op.label for op in t.data.allWidth"></select>
 
         Высота:
-        <select ng-model="t.height" ng-options="op.id as op.label for op in t.allHeight"></select>
+        <select ng-model="t.model.height" ng-options="op.id as op.label for op in t.data.allHeight"></select>
 
         Диаметр:
-        <select ng-model="t.caliber" ng-options="op.id as op.label for op in t.allCaliber"></select>
+        <select ng-model="t.model.caliber" ng-options="op.id as op.label for op in t.data.allCaliber"></select>
     </div>
 
     <hr/>
@@ -144,7 +145,7 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="js/vendor/jquery_1.11.1.js"></script>
 <script src="js/vendor/angular.min.js"></script>
-<script src="js/vendor/ui-bootstrap-0.13.0.min.js"></script>
+<script src="js/vendor/ui-bootstrap-0.12.1.min.js"></script>
 <script src="js/vendor/angular-resource.min.js"></script>
 <script src="js/vendor/angular-animate.min.js"></script>
 <script src="js/vendor/angular.rangeSlider.js"></script>

@@ -4,32 +4,42 @@
         .controller('tiresCtrl', tiresCtrl)
         .filter("tireFilter", tireFilter)
         .factory('tiresService', tiresService)
+        .factory('tireStorage', tireStorage)
         .directive('tireRangeSlider', tireRangeSlider)
     ;
 
 
-    function tiresCtrl(tiresService) {
+    function tiresCtrl($scope, tiresService, tireStorage) {
         var tiresCtrl = this;
 
-        this.width = 1;
-        this.height = 5;
-        this.caliber = 9;
+        this.data = {
+            allWidth: [], allHeight: [], allCaliber: []
+        };
 
-        this.allWidth = [
-            {id: 1, label: "1"},
-            {id: 2, label: "2"},
-            {id: 3, label: "3"}
-        ];
-        this.allHeight = [
-            {id: 4, label: "4"},
-            {id: 5, label: "5"},
-            {id: 6, label: "6"}
-        ];
-        this.allCaliber = [
-            {id: 7, label: "7"},
-            {id: 8, label: "8"},
-            {id: 9, label: "9"}
-        ];
+        var i;
+        for (i = 155; i <= 315; i += 10) {
+            this.data.allWidth.push({id: i, label: "" + i});
+        }
+
+        for (i = 25; i <= 85; i += 5) {
+            this.data.allHeight.push({id: i, label: "" + i});
+        }
+
+        for (i = 12; i <= 26; i++) {
+            this.data.allCaliber.push({id: i, label: "" + i});
+        }
+        this.model = tireStorage.load("model", {
+            height: 55, width: 185, caliber: 15
+        });
+
+        $scope.$watch(angular.bind(this, function () {
+            //noinspection JSPotentiallyInvalidUsageOfThis
+            return this.model;
+        }), function (newValue, oldValue) {
+            if (newValue != oldValue) {
+                tireStorage.save('model', newValue);
+            }
+        }, true);
 
         tiresCtrl.ranges = {
             filterNames: {}
@@ -94,6 +104,18 @@
 
     function tiresService($resource) {
         return $resource("js/tires.json");
+    }
+
+    function tireStorage() {
+        return {
+            save: function (name, model) {
+                localStorage[name] = angular.toJson(model);
+            },
+            load: function (name, defaultModel) {
+                if (!defaultModel) defaultModel = {};
+                return angular.extend(defaultModel, angular.fromJson(localStorage[name]));
+            }
+        };
     }
 
     function tireRangeSlider() {
