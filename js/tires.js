@@ -1,13 +1,46 @@
 {
     angular
         .module('tiresApp', ['ngResource', 'ui.bootstrap', 'ui-rangeSlider'])
+        .controller('carsCtrl', carsCtrl)
         .controller('tiresCtrl', tiresCtrl)
+        .filter('carFilter', carFilter)
         .filter("tireFilter", tireFilter)
+        .factory('carsService', carsService)
         .factory('tiresService', tiresService)
         .factory('tireStorage', tireStorage)
         .directive('tireRangeSlider', tireRangeSlider)
     ;
 
+    function carsCtrl($scope, carsService, tireStorage) {
+        var carsCtrl = this;
+        this.data = {};
+        carsService.get(function (data) {
+            carsCtrl.data.cars = data.cars;
+            var i, arr, from, to;
+            var separator = /[\s\,]+/;
+            angular.forEach(carsCtrl.data.cars, function (car) {
+                arr = [car.b.split(separator), car.m.split(separator), car.s.split(separator)];
+                parseInt(car.f)
+                from = parseInt(car.f);
+                to = parseInt(car.t);
+                if (!isNaN(from) && !isNaN(to) && !from <= to) {
+                    for (i = from; i <= to; i++) arr.push(i);
+                }
+                car.text = angular.lowercase(arr.join("|"));
+            });
+        });
+
+        this.selectCar = function (car, viewKind, model) {
+            if (viewKind == 'b') {
+                $scope.carSearch = car.b;
+            } else if (viewKind == 'm') {
+                $scope.carSearch = car.b + " " + car.m;
+            } else {
+                $scope.carSearch = car.b + " " + car.m + " " + car.s + " " + car.f + "-" + car.t;
+                model.width = 205;
+            }
+        }
+    }
 
     function tiresCtrl($scope, tiresService, tireStorage) {
         var tiresCtrl = this;
@@ -65,14 +98,10 @@
                         }
                     }
                 }
-                angular.extend(tire, {url: "i/tire.jpg"});
+                tiresCtrl.tires[i] = angular.extend({"url": "i/tire.jpg"}, tire);
             }
         });
 
-        // remove
-        tiresCtrl.range = {
-            from: 0, to: 10
-        };
     }
 
     function isFilterFit(item, ranges) {
@@ -83,6 +112,56 @@
                     var value = parseInt(item[name]);
                     if (!(value >= range.from && value <= range.to)) return false;
                 }
+            }
+        }
+        return true;
+    }
+
+    function carFilter() {
+        return function (arr, searchText) {
+            var result = items = [], hasMoreItems = false, brandsCount = 0;
+            var brands = {}, models = {};
+            if (arr && arr.length) {
+                for (var i = 0; i < arr.length; i++) {
+                    if (isCarFit(arr[i], searchText)) {
+                        if (items.length < 30) {
+                            items.push(arr[i]);
+                        } else {
+                            hasMoreItems = true;
+                        }
+                        if (!brands[arr[i].b]) {
+                            brandsCount++;
+                        }
+                        brands[arr[i].b] = arr[i];
+                        if (brandsCount <= 1) {
+                            models[arr[i].m] = arr[i];
+                        }
+                    }
+                }
+            }
+
+            if (hasMoreItems) {
+                if (brandsCount > 1) {
+                    result = values(brands).sort(function (a, b) {
+                        return alphabeticalSort(a.b, b.b);
+                    });
+                    result.viewKind = "b";
+                } else {
+                    result = values(models).sort(function (a, b) {
+                        return alphabeticalSort(a.m, b.m);
+                    });
+                    result.viewKind = "m";
+                }
+            }
+            return result;
+        }
+    }
+
+    function isCarFit(car, searchText) {
+        if (searchText) {
+            var i, arr = angular.lowercase(searchText).split(/[\s\-]+/);
+            for (i = 0; i < arr.length; i++) {
+                if (car.text.indexOf(arr[i]) < 0) return false;
             }
         }
         return true;
@@ -100,6 +179,10 @@
             }
             return items;
         }
+    }
+
+    function carsService($resource) {
+        return $resource("js/cars.json");
     }
 
     function tiresService($resource) {
@@ -125,6 +208,27 @@
                 range: '='
             },
             template: '<div range-slider min="range.min" max="range.max" model-min="range.from" model-max="range.to" attach-handle-values="true"></div>'
+        }
+    }
+
+    // === utilities ===
+    function values(map) {
+        var arr = [];
+        angular.forEach(map, function (value, key) {
+            arr.push(value)
+        });
+        return arr;
+    }
+
+    function alphabeticalSort(a, b) {
+        var A = a.toUpperCase();
+        var B = b.toUpperCase();
+        if (A < B) {
+            return -1;
+        } else if (A > B) {
+            return 1;
+        } else {
+            return 0;
         }
     }
 

@@ -8,9 +8,9 @@
     <meta name="author" content="">
     <title>Шины для машины</title>
 
-    <link href="css/vendor/bootstrap.css" rel="stylesheet">
-    <link href="css/vendor/bootstrap-theme.css" rel="stylesheet">
-    <link href="css/vendor/angular.rangeSlider.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <link href="css/angular.rangeSlider.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <style>
@@ -21,6 +21,33 @@
         body > .container {
             padding: 40px 15px;
         }
+
+        input[type='text'] {
+            width: 100%;
+        }
+
+        .cars {
+            border: 1px dashed silver;
+            border-top: none;
+            min-height: 200px;
+        }
+
+        ul.tires, ul.cars {
+            list-style: none;
+        }
+
+        ul.cars li.b {
+            display: inline-block;
+            width: 200px;
+        }
+
+        ul.cars li.b span.m {
+            display: none;
+        }
+
+        ul.cars li.m span.s {
+            display: none;
+        }
     </style>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -29,11 +56,6 @@
     <script src="js/vendor/respond_1.4.2.min.js"></script>
     <![endif]-->
 
-    <style>
-        ul.tires {
-            list-style: none;
-        }
-    </style>
 </head>
 
 <body ng-app="tiresApp">
@@ -67,9 +89,30 @@
     <div>
         <h1>Выбор шины для машины</h1>
 
-        <p>
-            <a href="#">Выбрать по марке автомобиля</a>
-        </p>
+        <p> Выбрать по марке автомобиля</p>
+
+        <div ng-controller="carsCtrl as c">
+
+            <div class="input-group">
+                <input type="text" class="form-control">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </span>
+            </div>
+            <ul class="cars">
+                <li ng-repeat="car in cars = (c.data.cars | carFilter:carSearch)" ng-class="cars.viewKind">
+                    <a ng-click="c.selectCar(car, cars.viewKind, t.model)">
+                    <span class="b">{{car.b}}
+                        <span class="m">{{car.m}}
+                            <span class="s">{{car.s}}
+                                <span>{{car.f}}-{{car.t}}</span>
+                            </span>
+                        </span>
+                    </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
         Ширина:
         <select ng-model="t.model.width" ng-options="op.id as op.label for op in t.data.allWidth"></select>
@@ -85,7 +128,7 @@
 
     <div>
         <accordion>
-            <accordion-group heading="Мокрое покрытие" is-open="true">
+            <accordion-group heading="Мокрое покрытие" is-open="false">
                 Управляемость
                 <tire-range-slider range="t.ranges.controllabilityWet"></tire-range-slider>
                 Тормозной путь
