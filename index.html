@@ -22,9 +22,15 @@
             padding: 40px 15px;
         }
 
+        .input-group button {
+            top: 0;
+        }
+
         .cars {
             border: 1px dashed silver;
             border-top: none;
+            max-height: 200px;
+            overflow-y: auto;
         }
 
         ul.tires, ul.cars {
@@ -94,15 +100,18 @@
             <div class="input-group">
                 <input type="text" class="form-control" ng-model="t.model.carSearch"/>
                 <span class="input-group-btn">
-                    <button class="btn btn-default glyphicon glyphicon-remove" type="button" style="top:0;"
+                    <button class="btn btn-default glyphicon glyphicon-arrow-left" type="button"
+                            ng-click="c.historyBack(t.model)"></button>
+                </span>
+                <span class="input-group-btn">
+                    <button class="btn btn-default glyphicon glyphicon-remove" type="button"
                             ng-click="t.model.carSearch=''"></button>
                 </span>
             </div>
             <ul class="cars">
-                <li ng-repeat="car in cars = (c.data.cars | carFilter:t.model.carSearch)"
-                    class="ng-class:cars.viewKind"
-                    >
-                    <a href="#" ng-click="c.selectCar(car, cars.viewKind, t.model)" ng-class="{active: car.id==t.model.selectedCar}">
+                <li ng-repeat="car in cars = (c.data.cars | carFilter:t.model.carSearch)" ng-class="cars.viewKind">
+                    <a href="#" ng-click="c.selectCar(car, cars.viewKind, t.model)"
+                       ng-class="{active: car.id==t.model.selectedCar}">
                         <span class="b">{{car.b}}
                             <span class="m">{{car.m}}
                                 <span class="s">{{car.s}}

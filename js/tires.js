@@ -43,6 +43,12 @@
                 model.caliber = parseInt(arr[2]);
                 model.selectedCar = car.id;
             }
+        };
+
+        this.historyBack = function (model) {
+            var n = model.carSearch.lastIndexOf(" ");
+            model.carSearch = model.carSearch.substr(0, n);
+            model.selectedCar = null;
         }
     }
 
