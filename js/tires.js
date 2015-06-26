@@ -36,13 +36,12 @@
             } else if (viewKind == 'm') {
                 model.carSearch = car.b + " " + car.m;
             } else {
-                model.carSearch = car.b + " " + car.m + " " + car.s + " (" + car.f + "-" + car.t + ")";
-                // 235/65 R17
+                //model.carSearch = car.b + " " + car.m + " " + car.s + " (" + car.f + "-" + car.t + ")";
                 var arr = car.o1.split(/[\/ R]+/);
-                console.log(arr)
                 model.width = parseInt(arr[0]);
                 model.height = parseInt(arr[1]);
                 model.caliber = parseInt(arr[2]);
+                model.selectedCar = car.id;
             }
         }
     }
@@ -124,16 +123,12 @@
 
     function carFilter() {
         return function (arr, searchText) {
-            var result = items = [], hasMoreItems = false, brandsCount = 0;
+            var result = items = [], brandsCount = 0;
             var brands = {}, models = {};
             if (arr && arr.length) {
                 for (var i = 0; i < arr.length; i++) {
                     if (isCarFit(arr[i], searchText)) {
-                        if (items.length < 30) {
-                            items.push(arr[i]);
-                        } else {
-                            hasMoreItems = true;
-                        }
+                        items.push(arr[i]);
                         if (!brands[arr[i].b]) {
                             brandsCount++;
                         }
@@ -145,14 +140,15 @@
                 }
             }
 
-            if (hasMoreItems) {
-                if (brandsCount > 1) {
-                    result = values(brands).sort(function (a, b) {
-                        return alphabeticalSort(a.b, b.b);
-                    });
-                    result.viewKind = "b";
-                } else {
-                    result = values(models).sort(function (a, b) {
+            if (brandsCount > 1) {
+                result = values(brands).sort(function (a, b) {
+                    return alphabeticalSort(a.b, b.b);
+                });
+                result.viewKind = "b";
+            } else {
+                var v = values(models);
+                if (v.length > 1) {
+                    result = v.sort(function (a, b) {
                         return alphabeticalSort(a.m, b.m);
                     });
                     result.viewKind = "m";

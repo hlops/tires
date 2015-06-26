@@ -43,6 +43,10 @@
         ul.cars li.m span.s {
             display: none;
         }
+
+        ul.cars li a.active {
+            color: black;
+        }
     </style>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -90,16 +94,20 @@
             <div class="input-group">
                 <input type="text" class="form-control" ng-model="t.model.carSearch"/>
                 <span class="input-group-btn">
-                    <button class="btn btn-default glyphicon glyphicon-remove" type="button" style="top:0;" ng-click="t.model.carSearch=''"></button>
+                    <button class="btn btn-default glyphicon glyphicon-remove" type="button" style="top:0;"
+                            ng-click="t.model.carSearch=''"></button>
                 </span>
             </div>
             <ul class="cars">
-                <li ng-repeat="car in cars = (c.data.cars | carFilter:t.model.carSearch)" ng-class="cars.viewKind">
-                    <a href="#" ng-click="c.selectCar(car, cars.viewKind, t.model)">
+                <li ng-repeat="car in cars = (c.data.cars | carFilter:t.model.carSearch)"
+                    class="ng-class:cars.viewKind"
+                    >
+                    <a href="#" ng-click="c.selectCar(car, cars.viewKind, t.model)" ng-class="{active: car.id==t.model.selectedCar}">
                         <span class="b">{{car.b}}
                             <span class="m">{{car.m}}
                                 <span class="s">{{car.s}}
                                     <span>({{car.f}}-{{car.t}})</span>
+                                    <span>{{car.o1}}</span>
                                 </span>
                             </span>
                         </span>
