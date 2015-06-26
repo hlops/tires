@@ -32,12 +32,17 @@
 
         this.selectCar = function (car, viewKind, model) {
             if (viewKind == 'b') {
-                $scope.carSearch = car.b;
+                model.carSearch = car.b;
             } else if (viewKind == 'm') {
-                $scope.carSearch = car.b + " " + car.m;
+                model.carSearch = car.b + " " + car.m;
             } else {
-                $scope.carSearch = car.b + " " + car.m + " " + car.s + " " + car.f + "-" + car.t;
-                model.width = 205;
+                model.carSearch = car.b + " " + car.m + " " + car.s + " (" + car.f + "-" + car.t + ")";
+                // 235/65 R17
+                var arr = car.o1.split(/[\/ R]+/);
+                console.log(arr)
+                model.width = parseInt(arr[0]);
+                model.height = parseInt(arr[1]);
+                model.caliber = parseInt(arr[2]);
             }
         }
     }
@@ -159,7 +164,7 @@
 
     function isCarFit(car, searchText) {
         if (searchText) {
-            var i, arr = angular.lowercase(searchText).split(/[\s\-]+/);
+            var i, arr = angular.lowercase(searchText).split(/[\s\-()]+/);
             for (i = 0; i < arr.length; i++) {
                 if (car.text.indexOf(arr[i]) < 0) return false;
             }

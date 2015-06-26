@@ -22,14 +22,9 @@
             padding: 40px 15px;
         }
 
-        input[type='text'] {
-            width: 100%;
-        }
-
         .cars {
             border: 1px dashed silver;
             border-top: none;
-            min-height: 200px;
         }
 
         ul.tires, ul.cars {
@@ -92,23 +87,22 @@
         <p> Выбрать по марке автомобиля</p>
 
         <div ng-controller="carsCtrl as c">
-
             <div class="input-group">
-                <input type="text" class="form-control">
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                <input type="text" class="form-control" ng-model="t.model.carSearch"/>
+                <span class="input-group-btn">
+                    <button class="btn btn-default glyphicon glyphicon-remove" type="button" style="top:0;" ng-click="t.model.carSearch=''"></button>
                 </span>
             </div>
             <ul class="cars">
-                <li ng-repeat="car in cars = (c.data.cars | carFilter:carSearch)" ng-class="cars.viewKind">
-                    <a ng-click="c.selectCar(car, cars.viewKind, t.model)">
-                    <span class="b">{{car.b}}
-                        <span class="m">{{car.m}}
-                            <span class="s">{{car.s}}
-                                <span>{{car.f}}-{{car.t}}</span>
+                <li ng-repeat="car in cars = (c.data.cars | carFilter:t.model.carSearch)" ng-class="cars.viewKind">
+                    <a href="#" ng-click="c.selectCar(car, cars.viewKind, t.model)">
+                        <span class="b">{{car.b}}
+                            <span class="m">{{car.m}}
+                                <span class="s">{{car.s}}
+                                    <span>({{car.f}}-{{car.t}})</span>
+                                </span>
                             </span>
                         </span>
-                    </span>
                     </a>
                 </li>
             </ul>
