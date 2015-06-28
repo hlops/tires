@@ -107,11 +107,10 @@
     <div>
         <h1>Выбор шины для машины</h1>
 
-        <p> Выбрать по марке автомобиля</p>
-
         <div ng-controller="carsCtrl as c">
             <div class="input-group">
-                <input type="text" class="form-control" ng-model="t.model.carSearch"/>
+                <input type="text" class="form-control" ng-model="t.model.carSearch"
+                       placeholder="Название или марка машины"/>
                 <span class="input-group-btn">
                     <button class="btn btn-default glyphicon glyphicon-arrow-left" type="button"
                             ng-click="c.historyBack(t.model)"></button>
