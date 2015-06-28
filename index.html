@@ -37,22 +37,35 @@
             list-style: none;
         }
 
-        ul.cars li.b {
+        ul.cars li.brand {
             display: inline-block;
             width: 200px;
         }
 
-        ul.cars li.b span.m {
+        ul.cars li.brand span.model {
             display: none;
         }
 
-        ul.cars li.m span.s {
+        ul.cars li.model span.modification {
             display: none;
         }
 
         ul.cars li a.active {
             color: black;
         }
+
+        div.oem {
+            display: none;
+        }
+
+        div.oem.visible {
+            display: block;
+        }
+
+        div.oem a {
+            margin-left: 6px;
+        }
+
     </style>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -105,38 +118,44 @@
                 </span>
                 <span class="input-group-btn">
                     <button class="btn btn-default glyphicon glyphicon-remove" type="button"
-                            ng-click="t.model.carSearch=''"></button>
+                            ng-click="c.clearSearch(t.model)"></button>
                 </span>
             </div>
             <ul class="cars">
                 <li ng-repeat="car in cars = (c.data.cars | carFilter:t.model.carSearch)" ng-class="cars.viewKind">
                     <a href="#" ng-click="c.selectCar(car, cars.viewKind, t.model)"
-                       ng-class="{active: car.id==t.model.selectedCar}">
-                        <span class="b">{{car.b}}
-                            <span class="m">{{car.m}}
-                                <span class="s">{{car.s}}
+                       ng-class="{active: car.id==t.model.selectedCarId}">
+                        <span class="brand">{{car.b}}
+                            <span class="model">{{car.m}}
+                                <span class="modification">{{car.s}}
                                     <span>({{car.f}}-{{car.t}})</span>
-                                    <span>{{car.o1}}</span>
                                 </span>
                             </span>
                         </span>
                     </a>
                 </li>
             </ul>
+
+            <div class="oem" ng-class="{visible: t.model.selectedCarId && oems.length>1}">
+                Есть варианты:
+                <a href="" ng-repeat="oem in oems = t.model.oem track by $index" ng-click="c.selectByOem(oem, t.model)">
+                    {{oem}}
+                </a>
+            </div>
         </div>
 
-        Ширина:
-        <select ng-model="t.model.width" ng-options="op.id as op.label for op in t.data.allWidth"></select>
+        <div>
+            Ширина:
+            <select ng-model="t.model.width" ng-options="op.id as op.label for op in t.data.allWidth"></select>
 
-        Высота:
-        <select ng-model="t.model.height" ng-options="op.id as op.label for op in t.data.allHeight"></select>
+            Высота:
+            <select ng-model="t.model.height" ng-options="op.id as op.label for op in t.data.allHeight"></select>
 
-        Диаметр:
-        <select ng-model="t.model.caliber" ng-options="op.id as op.label for op in t.data.allCaliber"></select>
+            Диаметр:
+            <select ng-model="t.model.caliber" ng-options="op.id as op.label for op in t.data.allCaliber"></select>
+        </div>
     </div>
-
-    <hr/>
-
+    <hr>
     <div>
         <accordion>
             <accordion-group heading="Мокрое покрытие" is-open="false">

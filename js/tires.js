@@ -11,7 +11,7 @@
         .directive('tireRangeSlider', tireRangeSlider)
     ;
 
-    function carsCtrl($scope, carsService, tireStorage) {
+    function carsCtrl(carsService, tireStorage) {
         var carsCtrl = this;
         this.data = {};
         carsService.get(function (data) {
@@ -31,24 +31,38 @@
         });
 
         this.selectCar = function (car, viewKind, model) {
-            if (viewKind == 'b') {
+            model.selectedCarId = null;
+            if (viewKind == 'brand') {
                 model.carSearch = car.b;
-            } else if (viewKind == 'm') {
+            } else if (viewKind == 'model') {
                 model.carSearch = car.b + " " + car.m;
             } else {
-                //model.carSearch = car.b + " " + car.m + " " + car.s + " (" + car.f + "-" + car.t + ")";
-                var arr = car.o1.split(/[\/ R]+/);
-                model.width = parseInt(arr[0]);
-                model.height = parseInt(arr[1]);
-                model.caliber = parseInt(arr[2]);
-                model.selectedCar = car.id;
+                model.selectedCarId = car.id;
+                this.selectByOem(car.o1, model);
+                var oem = [car.o1];
+                for (var i = 2; i < 8; i++) {
+                    if (car["o" + i]) oem.push(car["o" + i]);
+                }
+                model.oem = oem;
             }
+        };
+
+        this.selectByOem = function(oem, model) {
+            var arr = oem.split(/[\/ R]+/);
+            model.width = parseInt(arr[0]);
+            model.height = parseInt(arr[1]);
+            model.caliber = parseInt(arr[2]);
         };
 
         this.historyBack = function (model) {
             var n = model.carSearch.lastIndexOf(" ");
             model.carSearch = model.carSearch.substr(0, n);
-            model.selectedCar = null;
+            model.selectedCarId = null;
+        };
+
+        this.clearSearch = function (model) {
+            model.carSearch = "";
+            model.selectedCarId = null;
         }
     }
 
@@ -150,14 +164,14 @@
                 result = values(brands).sort(function (a, b) {
                     return alphabeticalSort(a.b, b.b);
                 });
-                result.viewKind = "b";
+                result.viewKind = "brand";
             } else {
                 var v = values(models);
                 if (v.length > 1) {
                     result = v.sort(function (a, b) {
                         return alphabeticalSort(a.m, b.m);
                     });
-                    result.viewKind = "m";
+                    result.viewKind = "model";
                 }
             }
             return result;
@@ -221,7 +235,7 @@
     // === utilities ===
     function values(map) {
         var arr = [];
-        angular.forEach(map, function (value, key) {
+        angular.forEach(map, function (value) {
             arr.push(value)
         });
         return arr;
