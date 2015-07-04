@@ -9,10 +9,17 @@
         .factory('tiresService', tiresService)
         .factory('tireStorage', tireStorage)
         .directive('tireRangeSlider', tireRangeSlider)
+        .config(['$locationProvider', function ($locationProvider) {
+            $locationProvider.html5Mode({
+                enabled: true,
+                requireBase: false
+            });
+        }])
     ;
 
-    function carsCtrl(carsService, tireStorage) {
+    function carsCtrl(carsService, $location) {
         var carsCtrl = this;
+
         this.data = {};
         carsService.get(function (data) {
             carsCtrl.data.cars = data.cars;
@@ -20,7 +27,7 @@
             var separator = /[\s\,]+/;
             angular.forEach(carsCtrl.data.cars, function (car) {
                 arr = [car.b.split(separator), car.m.split(separator), car.s.split(separator)];
-                parseInt(car.f)
+                parseInt(car.f);
                 from = parseInt(car.f);
                 to = parseInt(car.t);
                 if (!isNaN(from) && !isNaN(to) && !from <= to) {
@@ -30,43 +37,41 @@
             });
         });
 
-        this.selectCar = function (car, viewKind, model) {
-            model.selectedCarId = null;
+        this.selectCar = function (car, viewKind, model, scale) {
+            if (model.query) {
+                // save search history
+                $location.search(angular.extend({}, model));
+            }
+            model = {};
             if (viewKind == 'brand') {
-                model.carSearch = car.b;
+                model.brand = car.b;
+                $location.search(model);
             } else if (viewKind == 'model') {
-                model.carSearch = car.b + " " + car.m;
+                model.brand = car.b;
+                model.model = car.m;
+                $location.search(model);
             } else {
-                model.selectedCarId = car.id;
-                this.selectByOem(car.o1, model);
                 var oem = [car.o1];
                 for (var i = 2; i < 8; i++) {
                     if (car["o" + i]) oem.push(car["o" + i]);
                 }
-                model.oem = oem;
+                model.id = car.id;
+                this.selectByOem(car.o1, model, scale, 0);
             }
+            return model;
         };
 
-        this.selectByOem = function(oem, model) {
+        this.selectByOem = function (oem, model, scale, index) {
             var arr = oem.split(/[\/ R]+/);
-            model.width = parseInt(arr[0]);
-            model.height = parseInt(arr[1]);
-            model.caliber = parseInt(arr[2]);
+            scale.width = parseInt(arr[0]);
+            scale.height = parseInt(arr[1]);
+            scale.caliber = parseInt(arr[2]);
+            model.oem = index;
+            $location.search(model);
         };
-
-        this.historyBack = function (model) {
-            var n = model.carSearch.lastIndexOf(" ");
-            model.carSearch = model.carSearch.substr(0, n);
-            model.selectedCarId = null;
-        };
-
-        this.clearSearch = function (model) {
-            model.carSearch = "";
-            model.selectedCarId = null;
-        }
     }
 
-    function tiresCtrl($scope, tiresService, tireStorage) {
+    function tiresCtrl(tiresService, tireStorage, $location, $scope) {
         var tiresCtrl = this;
 
         this.data = {
@@ -85,18 +90,23 @@
         for (i = 12; i <= 26; i++) {
             this.data.allCaliber.push({id: i, label: "" + i});
         }
-        this.model = tireStorage.load("model", {
+        this.scale = tireStorage.load("scale", {
             height: 55, width: 185, caliber: 15
         });
+        this.model = {};
 
         $scope.$watch(angular.bind(this, function () {
             //noinspection JSPotentiallyInvalidUsageOfThis
-            return this.model;
+            return this.scale;
         }), function (newValue, oldValue) {
             if (newValue != oldValue) {
-                tireStorage.save('model', newValue);
+                tireStorage.save('scale', newValue);
             }
         }, true);
+
+        $scope.$on('$locationChangeSuccess', function () {
+            tiresCtrl.model = $location.search();
+        });
 
         tiresCtrl.ranges = {
             filterNames: {}
@@ -142,12 +152,12 @@
     }
 
     function carFilter() {
-        return function (arr, searchText) {
+        return function (arr, model) {
             var result = items = [], brandsCount = 0;
             var brands = {}, models = {};
             if (arr && arr.length) {
                 for (var i = 0; i < arr.length; i++) {
-                    if (isCarFit(arr[i], searchText)) {
+                    if (isCarFit(arr[i], model)) {
                         items.push(arr[i]);
                         if (!brands[arr[i].b]) {
                             brandsCount++;
@@ -178,12 +188,16 @@
         }
     }
 
-    function isCarFit(car, searchText) {
-        if (searchText) {
-            var i, arr = angular.lowercase(searchText).split(/[\s\-()]+/);
+    function isCarFit(car, model) {
+        if (model.query) {
+            var i, arr = angular.lowercase(model.query).split(/[\s\-()]+/);
             for (i = 0; i < arr.length; i++) {
                 if (car.text.indexOf(arr[i]) < 0) return false;
             }
+        } else {
+            if (model.brand && car.b != model.brand ||
+                model.model && car.m != model.model ||
+                model.id && car.id != model.id) return false;
         }
         return true;
     }

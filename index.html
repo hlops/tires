@@ -109,21 +109,17 @@
 
         <div ng-controller="carsCtrl as c">
             <div class="input-group">
-                <input type="text" class="form-control" ng-model="t.model.carSearch"
-                       placeholder="Название или марка машины"/>
-                <span class="input-group-btn">
-                    <button class="btn btn-default glyphicon glyphicon-arrow-left" type="button"
-                            ng-click="c.historyBack(t.model)"></button>
-                </span>
+                <input type="text" class="form-control" ng-model="t.model.query"
+                       placeholder="Поиск по названию или марке"/>
                 <span class="input-group-btn">
                     <button class="btn btn-default glyphicon glyphicon-remove" type="button"
-                            ng-click="c.clearSearch(t.model)"></button>
+                            ng-click="t.model = {}"></button>
                 </span>
             </div>
             <ul class="cars">
-                <li ng-repeat="car in cars = (c.data.cars | carFilter:t.model.carSearch)" ng-class="cars.viewKind">
-                    <a href="#" ng-click="c.selectCar(car, cars.viewKind, t.model)"
-                       ng-class="{active: car.id==t.model.selectedCarId}">
+                <li ng-repeat="car in cars = (c.data.cars | carFilter:t.model)" ng-class="cars.viewKind">
+                    <a href="#" ng-click="t.model = c.selectCar(car, cars.viewKind, t.model, t.scale)"
+                       ng-class="{active: car.id==t.model.id}">
                         <span class="brand">{{car.b}}
                             <span class="model">{{car.m}}
                                 <span class="modification">{{car.s}}
@@ -135,9 +131,10 @@
                 </li>
             </ul>
 
-            <div class="oem" ng-class="{visible: t.model.selectedCarId && oems.length>1}">
-                Есть варианты:
-                <a href="" ng-repeat="oem in oems = t.model.oem track by $index" ng-click="c.selectByOem(oem, t.model)">
+            <div class="oem" ng-class="{visible: t.model.id}">
+                Варианты:
+                <a href="" ng-repeat="oem in oems = t.oem track by $index"
+                   ng-click="c.selectByOem(oem, t.model, t.scale, $index)">
                     {{oem}}
                 </a>
             </div>
@@ -145,13 +142,13 @@
 
         <div>
             Ширина:
-            <select ng-model="t.model.width" ng-options="op.id as op.label for op in t.data.allWidth"></select>
+            <select ng-model="t.scale.width" ng-options="op.id as op.label for op in t.data.allWidth"></select>
 
             Высота:
-            <select ng-model="t.model.height" ng-options="op.id as op.label for op in t.data.allHeight"></select>
+            <select ng-model="t.scale.height" ng-options="op.id as op.label for op in t.data.allHeight"></select>
 
             Диаметр:
-            <select ng-model="t.model.caliber" ng-options="op.id as op.label for op in t.data.allCaliber"></select>
+            <select ng-model="t.scale.caliber" ng-options="op.id as op.label for op in t.data.allCaliber"></select>
         </div>
     </div>
     <hr>
