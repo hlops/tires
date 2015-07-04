@@ -109,17 +109,17 @@
 
         <div ng-controller="carsCtrl as c">
             <div class="input-group">
-                <input type="text" class="form-control" ng-model="t.model.query"
+                <input type="text" class="form-control" ng-model="c.model.query"
                        placeholder="Поиск по названию или марке"/>
                 <span class="input-group-btn">
                     <button class="btn btn-default glyphicon glyphicon-remove" type="button"
-                            ng-click="t.model = {}"></button>
+                            ng-click="c.model = {}"></button>
                 </span>
             </div>
             <ul class="cars">
-                <li ng-repeat="car in cars = (c.data.cars | carFilter:t.model)" ng-class="cars.viewKind">
-                    <a href="#" ng-click="t.model = c.selectCar(car, cars.viewKind, t.model, t.scale)"
-                       ng-class="{active: car.id==t.model.id}">
+                <li ng-repeat="car in cars = (c.data.cars | carFilter:c.model)" ng-class="cars.viewKind">
+                    <a href="#" ng-click="c.selectCar(car, cars.viewKind, t.scale)"
+                       ng-class="{active: car.id==c.model.id}">
                         <span class="brand">{{car.b}}
                             <span class="model">{{car.m}}
                                 <span class="modification">{{car.s}}
@@ -131,10 +131,10 @@
                 </li>
             </ul>
 
-            <div class="oem" ng-class="{visible: t.model.id}">
+            <div class="oem" ng-class="{visible: c.model.id}">
                 Варианты:
-                <a href="" ng-repeat="oem in oems = t.oem track by $index"
-                   ng-click="c.selectByOem(oem, t.model, t.scale, $index)">
+                <a href="" ng-repeat="oem in oems = c.oems() track by $index"
+                   ng-click="c.selectByOem(oem, $index, t.scale)">
                     {{oem}}
                 </a>
             </div>

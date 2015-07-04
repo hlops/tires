@@ -17,10 +17,16 @@
         }])
     ;
 
-    function carsCtrl(carsService, $location) {
+    function carsCtrl($scope, carsService, $location) {
         var carsCtrl = this;
 
         this.data = {};
+        this.model = {};
+
+        $scope.$on('$locationChangeSuccess', function () {
+            carsCtrl.model = $location.search();
+        });
+
         carsService.get(function (data) {
             carsCtrl.data.cars = data.cars;
             var i, arr, from, to;
@@ -37,38 +43,53 @@
             });
         });
 
-        this.selectCar = function (car, viewKind, model, scale) {
-            if (model.query) {
+        this.selectCar = function (car, viewKind) {
+            if (carsCtrl.model.query) {
                 // save search history
-                $location.search(angular.extend({}, model));
+                $location.search(angular.extend({}, carsCtrl.model));
             }
-            model = {};
+            carsCtrl.model = {};
             if (viewKind == 'brand') {
-                model.brand = car.b;
-                $location.search(model);
+                carsCtrl.model.brand = car.b;
             } else if (viewKind == 'model') {
-                model.brand = car.b;
-                model.model = car.m;
-                $location.search(model);
+                carsCtrl.model.brand = car.b;
+                carsCtrl.model.model = car.m;
             } else {
-                var oem = [car.o1];
-                for (var i = 2; i < 8; i++) {
-                    if (car["o" + i]) oem.push(car["o" + i]);
-                }
-                model.id = car.id;
-                this.selectByOem(car.o1, model, scale, 0);
+                carsCtrl.model.id = car.id;
+                carsCtrl.model.oem = 0;
             }
-            return model;
+            $location.search(carsCtrl.model);
+            return carsCtrl.model;
         };
 
-        this.selectByOem = function (oem, model, scale, index) {
+        this.selectByOem = function (oem, index, scale) {
             var arr = oem.split(/[\/ R]+/);
             scale.width = parseInt(arr[0]);
             scale.height = parseInt(arr[1]);
             scale.caliber = parseInt(arr[2]);
-            model.oem = index;
-            $location.search(model);
+            carsCtrl.model.oem = index;
+            $location.search(carsCtrl.model);
         };
+
+        this.oems = function () {
+            var i, car;
+            if (carsCtrl.data.cars) {
+                for (i = 0; i < carsCtrl.data.cars.length; i++) {
+                    if (carsCtrl.data.cars[i].id == carsCtrl.model.id) {
+                        car = carsCtrl.data.cars[i];
+                        break;
+                    }
+                }
+            }
+            var oems = [];
+            if (car) {
+                for (i = 1; i < 8; i++) {
+                    if (car["o" + i]) oems.push(car["o" + i]);
+                }
+                carsCtrl.model.id = car.id;
+            }
+            return oems;
+        }
     }
 
     function tiresCtrl(tiresService, tireStorage, $location, $scope) {
@@ -93,7 +114,6 @@
         this.scale = tireStorage.load("scale", {
             height: 55, width: 185, caliber: 15
         });
-        this.model = {};
 
         $scope.$watch(angular.bind(this, function () {
             //noinspection JSPotentiallyInvalidUsageOfThis
@@ -103,10 +123,6 @@
                 tireStorage.save('scale', newValue);
             }
         }, true);
-
-        $scope.$on('$locationChangeSuccess', function () {
-            tiresCtrl.model = $location.search();
-        });
 
         tiresCtrl.ranges = {
             filterNames: {}
@@ -135,7 +151,6 @@
                 tiresCtrl.tires[i] = angular.extend({"url": "i/tire.jpg"}, tire);
             }
         });
-
     }
 
     function isFilterFit(item, ranges) {
